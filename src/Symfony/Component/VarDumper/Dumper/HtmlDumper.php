@@ -1,16 +1,23 @@
 <?php
 
-namespace Patchwork\Dumper\Dumper;
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Symfony\Component\VarDumper\Dumper;
 
 /**
- * HtmlDumper dumps variable as HTML.
+ * HtmlDumper dumps variables as HTML.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  */
 class HtmlDumper extends CliDumper
 {
-    public static $defaultOutputStream = 'php://output';
-
     protected $dumpHeader = '';
     protected $dumpPrefix = '<pre class=sf-var-debug style=white-space:pre>';
     protected $dumpSuffix = '</pre>';
@@ -30,6 +37,9 @@ class HtmlDumper extends CliDumper
         'meta'      => 'color:#005FFF',
     );
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct($outputStream = null)
     {
         parent::__construct($outputStream);
@@ -39,6 +49,9 @@ class HtmlDumper extends CliDumper
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setLineDumper($callback)
     {
         $this->headerIsDumped = false;
@@ -46,24 +59,41 @@ class HtmlDumper extends CliDumper
         return parent::setLineDumper($callback);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setStyles(array $styles)
     {
         $this->headerIsDumped = false;
         $this->styles = $styles + $this->styles;
     }
 
+    /**
+     * Sets an HTML header the will be dumped once in the output stream.
+     *
+     * @param string $header An HTML string.
+     */
     public function setDumpHeader($header)
     {
         $this->dumpHeader = $header;
     }
 
+    /**
+     * Sets an HTML prefix and suffix that will encapse every single dump.
+     *
+     * @param string $prefix The prepended HTML string.
+     * @param string $suffix The appended HTML string.
+     */
     public function setDumpBoudaries($prefix, $suffix)
     {
         $this->dumpPrefix = $prefix;
         $this->dumpSuffix = $suffix;
     }
 
-    public function dumpHeader()
+    /**
+     * Dumps the HTML header.
+     */
+    protected function dumpHeader()
     {
         $this->headerIsDumped = true;
 
@@ -84,13 +114,9 @@ class HtmlDumper extends CliDumper
         parent::dumpLine(0);
     }
 
-    public function dumpStart()
-    {
-        if (!$this->headerIsDumped) {
-            $this->dumpHeader();
-        }
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     protected function style($style, $val)
     {
         if ('ref' === $style) {
@@ -126,6 +152,9 @@ class HtmlDumper extends CliDumper
         return "<span class=sf-var-debug-$style>$val</span>";
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function dumpLine($depth)
     {
         switch ($this->lastDepth - $depth) {
@@ -134,6 +163,9 @@ class HtmlDumper extends CliDumper
         }
 
         if (-1 === $this->lastDepth) {
+            if (!$this->headerIsDumped) {
+                $this->dumpHeader();
+            }
             $this->line = $this->dumpPrefix.$this->line;
         }
 
