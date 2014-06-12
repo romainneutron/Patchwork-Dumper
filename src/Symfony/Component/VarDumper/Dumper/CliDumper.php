@@ -270,7 +270,7 @@ class CliDumper extends AbstractDumper
      * Generic dumper used while leaving any hash-style structure.
      *
      * @param Cursor $cursor   The Cursor position in the dump.
-     * @param string $prefix   The string the ends to the next dumped line.
+     * @param string $suffix   The string the ends to the next dumped line.
      * @param bool   $hasChild When the dump of the hash has child item.
      * @param int    $cut      The number of items the hash has been cut by.
      */
